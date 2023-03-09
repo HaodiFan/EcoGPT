@@ -30,8 +30,7 @@ def ask():
                                          conversation_id=conversation_id)
 
     # Return a response
-    return jsonify({'res': res,
-                    'conversation_id': conversation_id})
+    return res['choices'][0]['message']['content']
 
 @app.route('/', methods=['GET'])
 def home():

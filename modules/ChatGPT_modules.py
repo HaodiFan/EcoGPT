@@ -45,7 +45,9 @@ class CPTServer:
             )
         return messages
 
-    def ask(self, prompt, conversation_id=uuid.uuid1().hex, model=openai_model):
+    def ask(self, prompt, conversation_id=None, model=openai_model):
+        if not conversation_id:
+            conversation_id = uuid.uuid1().hex
         if conversation_id not in self.__chat_history:
             self.__chat_history[conversation_id] = []
             self.__token_count[conversation_id] = 0
@@ -55,6 +57,8 @@ class CPTServer:
             model=model,
             messages=self.parse_conversation(conversation)
         )
+        # res = {'usage': 13}
+        logger.debug(res)
         try:
             self.__token_count[conversation_id] += res['usage']['total_tokens']
             conversation.append(('assistant', res['choice'][0]['message']['content']))

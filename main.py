@@ -1,6 +1,7 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from modules.ChatGPT_modules import CPTServer
 from loguru import logger
+
 
 app = Flask(__name__)
 cptserver = CPTServer()
@@ -29,7 +30,17 @@ def ask():
                                          conversation_id=conversation_id)
 
     # Return a response
-    return res, conversation_id
+    return jsonify({'res': res,
+                    'conversation_id': conversation_id})
+
+@app.route('/', methods=['GET'])
+def home():
+    # Check if the requester's IP address is allowed
+    if request.remote_addr not in ALLOWED_IPS:
+        logger.warning(request.remote_addr)
+        abort(403)
+
+    return 'HELLO'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=1234, debug=True)

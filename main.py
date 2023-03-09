@@ -18,20 +18,18 @@ def ask():
     # Get the prompt from the POST request
     prompt = request.form.get('prompt')
     if not prompt:
+        logger.error("mis prompt")
         abort(400, 'Missing prompt in POST request')
 
     # Get the prompt from the POST request
     conversation_id = request.form.get('conversation_id')
-    if not prompt:
-        abort(400, 'Missing conversation_id in POST request')
 
     # Process the prompt here...
     res, conversation_id = cptserver.ask(prompt=prompt,
                                          conversation_id=conversation_id)
 
     # Return a response
-    return jsonify({'res': res,
-                    'conversation_id': conversation_id})
+    return res['choices'][0]['message']['content']
 
 @app.route('/', methods=['GET'])
 def home():

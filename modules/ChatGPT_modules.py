@@ -61,7 +61,7 @@ class CPTServer:
         logger.debug(res)
         try:
             self.__token_count[conversation_id] += res['usage']['total_tokens']
-            conversation.append(('assistant', res['choice'][0]['message']['content']))
+            conversation.append(('assistant', res['choices'][0]['message']['content']))
         except Exception as e:
             logger.error(f"ERROR: Fail to get response. Exception: {str(e)}")
             logger.warning(json.dumps(res, indent=4, ensure_ascii=False))

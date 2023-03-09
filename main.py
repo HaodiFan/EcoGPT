@@ -6,7 +6,7 @@ from loguru import logger
 app = Flask(__name__)
 cptserver = CPTServer()
 
-ALLOWED_IPS = ['127.0.0.1']
+ALLOWED_IPS = ['127.0.0.1', '104.168.202.148']
 
 @app.route('/ask', methods=['POST'])
 def ask():

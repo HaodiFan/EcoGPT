@@ -17,6 +17,7 @@ class CPTServer:
         self.__chat_history = {}
         self.__current_key = api_keys[0]
         self.__token_count = {}
+        self.__current_conversation_id = None
         openai.api_key = self.__current_key
 
     def add_api_key(self, api_key):
@@ -31,7 +32,9 @@ class CPTServer:
         openai.api_key = self.__current_key
 
     @staticmethod
-    def parse_conversation(conversation, system_content='concise the response'):
+    def parse_conversation(conversation, system_content=None):
+        if not system_content:
+            system_content = 'concise your response'
         messages = [{
             'role': 'system',
             'content': system_content
@@ -45,9 +48,12 @@ class CPTServer:
             )
         return messages
 
-    def ask(self, prompt, conversation_id=None, model=openai_model):
+    def ask(self, prompt, conversation_id=None, model=openai_model, if_continue_prev_conv=False, if_human_mode=False):
         if not conversation_id:
-            conversation_id = uuid.uuid1().hex
+            if if_continue_prev_conv:
+                conversation_id = self.__current_conversation_id
+            else:
+                conversation_id = uuid.uuid1().hex
         if conversation_id not in self.__chat_history:
             self.__chat_history[conversation_id] = []
             self.__token_count[conversation_id] = 0
@@ -55,17 +61,16 @@ class CPTServer:
         conversation.append(('user', prompt))
         res = openai.ChatCompletion.create(
             model=model,
-            messages=self.parse_conversation(conversation)
+            messages=self.parse_conversation(conversation,
+                                             system_content='make your response like a daily chat; concise your response' if if_human_mode else None)
         )
-        # res = {'usage': 13}
-        logger.debug(res)
         try:
             self.__token_count[conversation_id] += res['usage']['total_tokens']
             conversation.append(('assistant', res['choices'][0]['message']['content']))
         except Exception as e:
             logger.error(f"ERROR: Fail to get response. Exception: {str(e)}")
             logger.warning(json.dumps(res, indent=4, ensure_ascii=False))
-
+        self.__current_conversation_id = conversation_id
         return res, conversation_id
 
 

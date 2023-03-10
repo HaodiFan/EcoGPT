@@ -21,12 +21,17 @@ def ask():
         logger.error("mis prompt")
         abort(400, 'Missing prompt in POST request')
 
-    # Get the prompt from the POST request
+    # Get the conversation_id from the POST request
     conversation_id = request.form.get('conversation_id')
+
+    # Get the if_continue_prev_conv from the POST request
+    if_continue_prev_conv = request.form.get('if_continue')
 
     # Process the prompt here...
     res, conversation_id = cptserver.ask(prompt=prompt,
-                                         conversation_id=conversation_id)
+                                         conversation_id=conversation_id,
+                                         if_continue_prev_conv=if_continue_prev_conv,
+                                         if_human_mode=True)
 
     # Return a response
     return res['choices'][0]['message']['content']

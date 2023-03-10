@@ -27,10 +27,12 @@ def ask():
     # Get the if_continue_prev_conv from the POST request
     if_continue_prev_conv = request.form.get('if_continue')
 
+    logger.debug(request.form)
+
     # Process the prompt here...
     res, conversation_id = cptserver.ask(prompt=prompt,
                                          conversation_id=conversation_id,
-                                         if_continue_prev_conv=if_continue_prev_conv,
+                                         if_continue_prev_conv=eval(if_continue_prev_conv),
                                          if_human_mode=True)
 
     # Return a response

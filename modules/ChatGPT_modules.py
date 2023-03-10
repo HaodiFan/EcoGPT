@@ -48,6 +48,14 @@ class CPTServer:
             )
         return messages
 
+    # def determine_if_new_conversation(self, prev_contents, current_content):
+    #     conversation = [('user', f'Previous contents are: {str(prev_contents)}. Is {current_content} related with previous?')]
+    #
+
+    def clear_prev(self):
+        self.__current_conversation_id = None
+        logger.debug("Conversation cleared.")
+
     def ask(self, prompt, conversation_id=None, model=openai_model, if_continue_prev_conv=False, if_human_mode=False):
         if not conversation_id:
             if if_continue_prev_conv:

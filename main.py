@@ -18,8 +18,7 @@ def ask():
     # Get the prompt from the POST request
     prompt = request.form.get('prompt')
     if not prompt:
-        logger.error("mis prompt")
-        abort(400, 'Missing prompt in POST request')
+        return
 
     # Get the conversation_id from the POST request
     conversation_id = request.form.get('conversation_id')
@@ -32,11 +31,20 @@ def ask():
     # Process the prompt here...
     res, conversation_id = cptserver.ask(prompt=prompt,
                                          conversation_id=conversation_id,
-                                         if_continue_prev_conv=eval(if_continue_prev_conv),
+                                         if_continue_prev_conv=True,
                                          if_human_mode=True)
 
     # Return a response
     return res['choices'][0]['message']['content']
+@app.route('/clear', methods=['GET'])
+def clear():
+    # Check if the requester's IP address is allowed
+    if request.remote_addr not in ALLOWED_IPS:
+        logger.warning(request.remote_addr)
+        abort(403)
+
+    cptserver.clear_prev()
+    return 'Cleared'
 
 @app.route('/', methods=['GET'])
 def home():

@@ -18,7 +18,7 @@ def ask():
     # Get the prompt from the POST request
     prompt = request.form.get('prompt')
     if not prompt:
-        return
+        return "No response"
 
     # Get the conversation_id from the POST request
     conversation_id = request.form.get('conversation_id')

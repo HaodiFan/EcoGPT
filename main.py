@@ -61,6 +61,8 @@ def diy_ask():
         logger.warning(request.remote_addr)
         abort(403)
     messages = request.json.get("messages")
+    print(messages)
+    abort(233)
     res = cptserver.diy_ask(messages=messages)
     return res['choices'][0]['message']['content']
 

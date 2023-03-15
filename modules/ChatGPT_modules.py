@@ -81,6 +81,12 @@ class CPTServer:
         self.__current_conversation_id = conversation_id
         return res, conversation_id
 
+    def diy_ask(self, messages, model=openai_model):
+        res = openai.ChatCompletion.create(
+            model=model,
+            messages=messages
+        )
+        return res
 
 if __name__ == "__main__":
     cptserver = CPTServer()

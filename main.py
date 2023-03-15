@@ -55,5 +55,14 @@ def home():
 
     return 'HELLO'
 
+@app.route('/diyAsk', methods=['POST'])
+def diy_ask():
+    if request.remote_addr not in ALLOWED_IPS:
+        logger.warning(request.remote_addr)
+        abort(403)
+    messages = request.json.get("messages")
+    res = cptserver.diy_ask(messages=messages)
+    return res['choices'][0]['message']['content']
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=1234, debug=True)
